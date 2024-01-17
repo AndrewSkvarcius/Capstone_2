@@ -1,0 +1,43 @@
+.card {
+    background-color: #4c7585d1;
+    color: #f0f2f5;
+    border: 10px solid rgba(167, 164, 164, 0.63);
+    box-shadow: inset 0 0 0 2px #ffffff;
+    box-sizing: border-box;
+    margin: 5px;
+}
+
+.list-group a {
+    margin-top: 1rem;
+    border-left: 5px dotted;
+    color: white;
+}
+
+.list-group a:not(:last-of-type) li {
+    border-bottom: none !important;
+}
+
+.list-group a:hover {
+    text-decoration: none;
+    border-left-style: solid;
+    border-left-width: 3px;
+}
+
+.list-group a:hover li {
+    margin-left: 2px;
+}
+
+.list-group-item {
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.list-group-item:hover {
+    cursor: pointer;
+}
+
+.inner-border {
+    border: 5px solid #101010d1;
+    box-shadow: inset 0 0 0 10px #ffffff;
+    box-sizing: border-box;
+}
