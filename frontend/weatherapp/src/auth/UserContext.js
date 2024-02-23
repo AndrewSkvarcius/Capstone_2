@@ -1,7 +1,12 @@
+// UserContext.js
 import React from "react";
 
-/** Context: provides currentUser object and setter for it throughout app. */
-
-const UserContext = React.createContext();
+// Initialize with undefined for better auto-completion in IDEs if needed
+const UserContext = React.createContext({
+  currentUser: undefined,
+  setCurrentUser: () => {}, // For setting the current user
+  notifyFavoritesUpdated: () => {}, // Function to call when favorites are updated
+  favoritesUpdated: false // State to track if favorites were updated
+});
 
 export default UserContext;

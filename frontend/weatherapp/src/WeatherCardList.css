@@ -1,7 +1,7 @@
 .card {
-    background-color: #4c7585d1;
-    color: #f0f2f5;
-    border: 10px solid rgba(167, 164, 164, 0.63);
+    background-color: #dfe4e5d1;
+    color: #818385;
+    border: 10px solid rgba(245, 239, 239, 0.63);
     box-shadow: inset 0 0 0 2px #ffffff;
     box-sizing: border-box;
     margin: 5px;
@@ -10,7 +10,7 @@
 .list-group a {
     margin-top: 1rem;
     border-left: 5px dotted;
-    color: white;
+    color: rgb(94, 90, 90);
 }
 
 .list-group a:not(:last-of-type) li {
@@ -36,8 +36,3 @@
     cursor: pointer;
 }
 
-.inner-border {
-    border: 5px solid #101010d1;
-    box-shadow: inset 0 0 0 10px #ffffff;
-    box-sizing: border-box;
-}

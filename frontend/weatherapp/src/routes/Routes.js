@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import LoginForm from "../auth/LoginForm"
 import SignupForm from "../auth/SignupForm"
 import Homepage from "../home/Homepage";
@@ -15,7 +15,7 @@ function Routers({login, signup}) {
     );
     return (
         <div className="pt-5">
-          <Routes>
+          <Switch>
   
             <Route exact path="/">
               <Homepage />
@@ -29,12 +29,12 @@ function Routers({login, signup}) {
               <SignupForm signup={signup} />
             </Route>
   
-            <PrivateRoute exact path="/favorites">
+            <PrivateRoute exact path="/weather">
               <Weather />
             </PrivateRoute>
   
-            <Navigate to="/" />
-          </Routes>
+            <Redirect to="/" />
+          </Switch>
         </div>
     );
   }

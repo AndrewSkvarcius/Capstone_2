@@ -1,9 +1,21 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Alert from "../common/Alert";
+import { Button, FormGroup, Label, Input, Form, Container, Row, Col } from 'reactstrap';
+
+/** Login form.
+ *
+ * Shows form and manages update to state on changes.
+ * On submission:
+ * - calls login function prop
+ * - redirects to /companies route
+ *
+ * Routes -> LoginForm -> Alert
+ * Routed as /login
+ */
 
 function LoginForm({ login }) {
-  const navigate = useNavigate();
+  const history = useHistory();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -17,62 +29,77 @@ function LoginForm({ login }) {
       "formErrors", formErrors,
   );
 
+  /** Handle form submit:
+   *
+   * Calls login func prop and, if successful, redirect to /companies.
+   */
+
   async function handleSubmit(evt) {
     evt.preventDefault();
     let result = await login(formData);
     if (result.success) {
-      navigate("/companies");
+      history.push("/companies");
     } else {
       setFormErrors(result.errors);
     }
   }
 
+  /** Update form data field */
   function handleChange(evt) {
     const { name, value } = evt.target;
-    setFormData(fData => ({ ...fData, [name]: value }));
+    setFormData(l => ({ ...l, [name]: value }));
   }
 
   return (
-      <div className="LoginForm">
-        <div className="container col-md-6 offset-md-3 col-lg-4 offset-lg-4">
-          <h3 className="mb-3">Log In</h3>
-          <div className="card">
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Username</label>
-                  <input
+    <div className="LoginForm">
+      <Container>
+        <Row className="justify-content-center">
+          <Col md="6" lg="4">
+            <h3 className="mb-3">Log In</h3>
+            <div className="card">
+              <div className="card-body">
+                <Form onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <Label for="username">Username</Label>
+                    <Input
+                      type="text"
                       name="username"
-                      className="form-control"
+                      id="username"
                       value={formData.username}
                       onChange={handleChange}
                       autoComplete="username"
                       required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Password</label>
-                  <input
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label for="password">Password</Label>
+                    <Input
                       type="password"
                       name="password"
-                      className="form-control"
+                      id="password"
                       value={formData.password}
                       onChange={handleChange}
                       autoComplete="current-password"
                       required
-                  />
-                </div>
-                {formErrors.length
-                    ? <Alert type="danger" messages={formErrors} />
-                    : null}
-                <button className="btn btn-primary float-right" type="submit">
-                  Submit
-                </button>
-              </form>
+                    />
+                  </FormGroup>
+                  {formErrors && formErrors.length ? (
+                    <Alert color="danger">
+                      {formErrors.map((error, index) => (
+                        <p key={index}>{error}</p>
+                      ))}
+                    </Alert>
+                  ) : null}
+                  <Button color="primary" className="float-right">
+                    Submit
+                  </Button>
+                </Form>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 }
 

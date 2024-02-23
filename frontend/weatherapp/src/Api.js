@@ -9,7 +9,9 @@ export const fetchWeatherData = async (location) => {
     const response = await axios.get(
       `${baseURL}/current?access_key=${apiKey}&query=${location}&units=f`
     );
+    console.log("fetchweatherData", response.data)
     return response.data;
+  
   } catch (error) {
     throw error;
   }

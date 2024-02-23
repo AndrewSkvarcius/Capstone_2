@@ -1,63 +1,69 @@
-import React, { useContext } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import UserContext from "../auth/UserContext";
 import "./Navigation.css";
+import {
+    Collapse,
+    Navbar,
+    NavbarToggler,
+    NavbarBrand,
+    Nav,
+    NavItem,
+    NavLink,
+    UncontrolledDropdown,
+  } from 'reactstrap';
+
+
 
 function Navigation({ logout }) {
 const { currentUser } = useContext(UserContext);
+const [isOpen, setIsOpen] = useState(false);
 console.debug("Navigation", "currentUser=", currentUser);
 
+const toggle = () => setIsOpen(!isOpen);
 
 function loggedInNav() {
     return (
-        <ul className="navbar-nav ml-auto">
-            
-            <li className="nav-item mr-4">
-                <NavLink clasName="nav-link" to="/favorites">Your Weathewer</NavLink>
-            </li>
-            
-            <li className="nav-item mr-4">
-                <NavLink className="nav-link" to="/login">Login</NavLink>
-            </li>
-
-            <li className="nav-item mr-4">
-                <NavLink className="nav-link" to="/logout">Logout</NavLink>
-            </li>
-
-            <li className="nav-item">
-                <Link className="nav-link" to="/" onClick={logout}>
-                    Log Out { currentUser.username }
-                </Link>
-                
-            </li>
-        </ul>
-    )
-}
+        <Nav className="ml-auto" navbar>
+          <NavItem>
+            <NavLink tag={Link} to="/weather">Weather Search</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink tag={Link} to="/" onClick={logout}>
+              Log Out {currentUser.username}
+            </NavLink>
+          </NavItem>
+        </Nav>
+      );
+    }
 
 function loggedOutNav(){
-    return(
-        <ul className="navbar-nav ml-auto">
-            <li className="nav-item mr-4">
-                <NavLink className="nav-link" to="/login">Login</NavLink>
-            </li>
+    return (
+        <Nav className="ml-auto" navbar>
+          <NavItem>
+            <NavLink tag={Link} to="/login">Login</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink tag={Link} to="/signup">Sign Up</NavLink>
+          </NavItem>
+        </Nav>
+      );
+    }
+    return (
+        <Navbar color="light" light expand="md">
+          <NavbarBrand tag={Link} to="/">Weather</NavbarBrand>
+          <NavbarToggler onClick={toggle} />
+          <Collapse isOpen={isOpen} navbar>
+            {currentUser ? loggedInNav() : loggedOutNav()}
+            <Nav className="ml-auto" navbar>
+              <UncontrolledDropdown nav inNavbar>
+                
+              </UncontrolledDropdown>
+            </Nav>
+          </Collapse>
+        </Navbar>
+      );
 
-            <li className="nav-item mr-4">
-                <NavLink className="nav-link" to="/signup">Sign Up</NavLink>
-            </li>
-
-        </ul>
-    )
-
-}
-
-return (
-    <nav className="Navigation navbar navbar-expand-md">
-        <Link className="nav-brand" to="/">
-            Jobly
-        </Link>
-        {currentUser ? loggedInNav() : loggedOutNav()}
-    </nav>
-);
 
 }
 export default Navigation;
