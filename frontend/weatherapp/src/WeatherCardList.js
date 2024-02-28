@@ -5,7 +5,7 @@ import FavsApi from './FavsApi';
 import { fetchWeatherData } from './Api';
 import UserContext from "./auth/UserContext";
 import './WeatherCardList.css';
-import { CardBody, ListGroup, ListGroupItem } from 'reactstrap';
+import { CardBody, ListGroup, ListGroupItem,CardGroup } from 'reactstrap';
 
 
 const WeatherCardList = () => {
@@ -54,20 +54,24 @@ const WeatherCardList = () => {
 
   return (
     <section className="col-md-4">
+      <CardGroup>
       <CardBody>
-        <h5>Weather List</h5>
         <ListGroup horizontal className="weather-card-list">
           {locationWeatherData.map((data, index) => (
             <ListGroupItem key={index}>
-              <WeatherCard
+                  <CardGroup>
+                  <WeatherCard
                 locationData={data}
                 favLocationId={data.favLocationId} // Pass the favLocationId to the WeatherCard
                 onDelete={handleDeleteFavorite}
               />
+                  </CardGroup>
+             
             </ListGroupItem>
           ))}
         </ListGroup>
       </CardBody>
+      </CardGroup>
     </section>
   );
 };

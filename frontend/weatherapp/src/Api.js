@@ -16,3 +16,15 @@ export const fetchWeatherData = async (location) => {
     throw error;
   }
 };
+
+export const fetchForecastData = async (location, days = 7) => {
+  try {
+    const response = await axios.get(
+      `${baseURL}/forecast?access_key=${apiKey}&query=${location}&forecast_days=${days}&units=f`
+    );
+    console.log("fetchForecastData", response.data)
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

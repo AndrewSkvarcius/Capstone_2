@@ -39,7 +39,7 @@ function SignupForm({ signup }) {
     if (result.success) {
       history.push("/home");
     } else {
-      setFormErrors(result.errors);
+      setFormErrors(result.errors || []);
     }
   }
 
