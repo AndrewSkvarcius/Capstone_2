@@ -2,34 +2,22 @@
 
 const db = require("../db");
 const bcrypt = require("bcrypt");
-const { sqlForPartialUpdate } = require("../helpers/sql");
-const {
-  NotFoundError,
-  BadRequestError,
-  UnauthorizedError,
-} = require("../expressError");
-
+const { NotFoundError, BadRequestError, UnauthorizedError } = require("../expressError");
 const { BCRYPT_WORK_FACTOR } = require("../config.js");
 
 /** Related functions for users. */
 
 class User {
-  /** authenticate user with username, password.
+  /** Authenticate user with username, password.
    *
-   * Returns { username, first_name, last_name, email, is_admin }
+   * Returns { id, username }
    *
-   * Throws UnauthorizedError is user not found or wrong password.
+   * Throws UnauthorizedError if user not found or wrong password.
    **/
 
   static async authenticate(username, password) {
-    // try to find the user first
     const result = await db.query(
-          `SELECT username,
-                  password,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email,
-                  is_admin AS "isAdmin"
+          `SELECT id, username, password
            FROM users
            WHERE username = $1`,
         [username],
@@ -38,7 +26,6 @@ class User {
     const user = result.rows[0];
 
     if (user) {
-      // compare hashed password to a new hash from password
       const isValid = await bcrypt.compare(password, user.password);
       if (isValid === true) {
         delete user.password;
@@ -51,13 +38,12 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { username, firstName, lastName, email, isAdmin }
+   * Returns { id, username }
    *
    * Throws BadRequestError on duplicates.
    **/
 
-  static async register(
-      { username, password }) {
+  static async register({ username, password }) {
     const duplicateCheck = await db.query(
           `SELECT username
            FROM users
@@ -72,15 +58,10 @@ class User {
     const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
 
     const result = await db.query(
-          `INSERT INTO users
-           (username,
-            password,
-           VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username`,
-        [
-          username,
-          hashedPassword,
-        ],
+          `INSERT INTO users (username, password)
+           VALUES ($1, $2)
+           RETURNING id, username`,
+        [username, hashedPassword],
     );
 
     const user = result.rows[0];
@@ -88,51 +69,72 @@ class User {
     return user;
   }
 
-  /** Given a username, return data about user.
+  /** Find all users.
    *
-   * Returns { username }
+   * Returns [{ id, username }, ...]
+   **/
 
+  static async findAll() {
+    const result = await db.query(
+          `SELECT id, username
+           FROM users
+           ORDER BY username`,
+    );
+
+    return result.rows;
+  }
+
+  /** Given a user id, return data about user and their favorite locations.
+   *
+   * Returns { id, username, favLocations: [{id, location}, ...] }
+   *
    * Throws NotFoundError if user not found.
    **/
 
-  static async get(username) {
+  static async get(id) {
     const userRes = await db.query(
-          `SELECT username
+          `SELECT id, username
            FROM users
-           WHERE username = $1`,
-        [username],
+           WHERE id = $1`,
+        [id],
     );
 
     const user = userRes.rows[0];
 
-    if (!user) throw new NotFoundError(`No user: ${username}`);
+    if (!user) throw new NotFoundError(`No user: ${id}`);
 
-    const userApplicationsRes = await db.query(
-          `SELECT a.job_id
-           FROM applications AS a
-           WHERE a.username = $1`, [username]);
+    const favLocationsRes = await db.query(
+          `SELECT id, location
+           FROM favLocations
+           WHERE user_id = $1`, [id]);
 
-    user.applications = userApplicationsRes.rows.map(a => a.job_id);
+    user.favLocations = favLocationsRes.rows;
     return user;
   }
 
-  /** Delete given user from database; returns undefined. */
+  /** Given a username, return data about the user.
+ *
+ * Returns { id, username }
+ *
+ * Throws NotFoundError if user not found.
+ **/
+static async getByUsername(username) {
+  const result = await db.query(
+      `SELECT id, username
+       FROM users
+       WHERE username = $1`,
+      [username],
+  );
 
-  static async remove(username) {
-    let result = await db.query(
-          `DELETE
-           FROM users
-           WHERE username = $1
-           RETURNING username`,
-        [username],
-    );
-    const user = result.rows[0];
+  const user = result.rows[0];
 
-    if (!user) throw new NotFoundError(`No user: ${username}`);
-  }
+  if (!user) throw new NotFoundError(`No user: ${username}`);
 
-  
+  return user; // Only user data is returned, without favorite locations
 }
 
+
+  // Additional methods like update and delete can be implemented here.
+}
 
 module.exports = User;
